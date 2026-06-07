@@ -1,0 +1,4 @@
+CREATE DATABASE SkincareDB;
+GO
+USE SkincareDB;
+GO
