@@ -1,12 +1,16 @@
-# 🧴 D2C Skincare E-Commerce — SQL Analytics Portfolio
+# 🧴 D2C Skincare E-Commerce — SQL & Power BI Analytics Portfolio
 
 ![SSMS](https://img.shields.io/badge/SQL%20Server%20Management%20Studio-CC2927?style=for-the-badge&logo=microsoftsqlserver&logoColor=white)
+![PowerBI](https://img.shields.io/badge/Power%20BI-F2C811?style=for-the-badge&logo=powerbi&logoColor=black)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 ![Kaggle](https://img.shields.io/badge/Kaggle-20BEFF?style=for-the-badge&logo=kaggle&logoColor=white)
 
 ## 📌 Project Overview
 
-This project is a SQL-based analytics portfolio using a synthetic relational dataset from a Direct-to-Consumer (D2C) Skincare E-Commerce business. The goal is to extract actionable business insights across customer behavior, product performance, sales trends, and return analysis using structured SQL queries on Microsoft SQL Server.
+This project is a two-part analytics portfolio built on a synthetic relational dataset from a Direct-to-Consumer (D2C) Skincare E-Commerce business:
+
+1. **SQL Analysis** — structured queries on Microsoft SQL Server to answer business questions on customer behavior, product performance, sales trends, and returns.
+2. **Power BI Dashboard** — an interactive multi-page dashboard built on top of the same relational model, covering revenue, customer segmentation (RFM), product profitability, and return analysis.
 
 **Dataset Source:** [D2C Skincare E-Commerce Analytics Dataset — Kaggle](https://www.kaggle.com/datasets/kaushalvyas16/d2c-skincare-e-commerce-analytics-dataset)
 
@@ -69,12 +73,14 @@ sql-skincare-ecommerce-analysis/
 ├── return_reason.sql               # Most frequent return reasons with percentage
 ├── refund_status.sql               # Refund status breakdown with percentage
 │
+├── Skincare_Analysis.pbix          # Power BI dashboard file
+│
 └── README.md
 ```
 
 ---
 
-## 🔍 Analysis Summary
+## 🔍 SQL Analysis Summary
 
 ### 👥 Customer Analysis
 
@@ -150,11 +156,32 @@ Summarizes the distribution of refund statuses (Replacement Sent, Refunded, Unde
 
 ---
 
+## 📈 Power BI Dashboard
+
+An interactive 4-page Power BI dashboard was built on the same relational data model to complement the SQL analysis, translating raw queries into a visual, business-ready reporting tool.
+
+### Pages
+
+1. **Executive Overview** — Total Revenue, Total Orders, AOV, Total Customers, and Return Rate KPIs; monthly revenue trend; revenue by product category; order distribution by sales channel (Website / Mobile App / Marketplace).
+2. **Customer & RFM Segmentation** — customer-level Recency, Frequency, and Monetary (RFM) analysis; customer distribution by acquisition channel and age group; a Frequency-vs-Monetary scatter plot for identifying high-value customer segments.
+3. **Product Profitability** — revenue, gross profit, and profit margin per product; gross profit by skin type; top 5 products by revenue; product rating vs. return rate scatter analysis to flag underperforming products.
+4. **Return Analysis** — return count and return rate KPIs; monthly return trend; return breakdown by reason and refund status; return rate by product.
+
+### Data Modeling & DAX Highlights
+
+- Built a **star-schema-style relationship model** across all 6 tables using Power BI's relationship engine, resolving multiple filter paths (e.g. `Returns` connects to both `Products` directly and indirectly via `Orders → Order_Items`) by selectively activating relationships and using `USERELATIONSHIP()` in DAX measures where an inactive path was needed.
+- Authored a full **DAX measure library** (`Total Revenue`, `AOV`, `Gross Profit`, `Profit Margin %`, `Return Rate`, `Return Rate by Product`, `Customer Recency/Frequency/Monetary`, etc.), using `CALCULATE`, `ALLEXCEPT`, `SUMX`, and `RELATED` for row-level profit and per-customer aggregation.
+- Built a dedicated **Date table** with `CALENDAR()` for correct chronological sorting and time-intelligence-ready analysis.
+- Implemented an **RFM-based customer segmentation column** using a `SWITCH(TRUE(), ...)` pattern to classify customers into segments such as Champion, Loyal Customer, At Risk, and Lost, based on Recency/Frequency/Monetary thresholds.
+
+---
+
 ## ⚙️ Setup & Usage
 
 ### Prerequisites
 - Microsoft SQL Server Express
 - Azure Data Studio
+- Power BI Desktop
 
 ### Steps
 
@@ -163,9 +190,7 @@ Summarizes the distribution of refund statuses (Replacement Sent, Refunded, Unde
 git clone https://github.com/muktiprab/sql-skincare-ecommerce-analysis.git
 ```
 
-2. Open Azure Data Studio and connect to `localhost\SQLEXPRESS`
-
-3. Run scripts in this order:
+2. **SQL setup** — open Azure Data Studio and connect to `localhost\SQLEXPRESS`, then run scripts in this order:
 ```sql
 -- Step 1: Create database
 -- Run: create_database.sql
@@ -182,6 +207,8 @@ git clone https://github.com/muktiprab/sql-skincare-ecommerce-analysis.git
 ```
 
 > **Note:** Update the file paths in `insert_data.sql` (e.g. `D:\Project SQL\Customers.csv`) to match the location of your CSV files before running BULK INSERT.
+
+3. **Power BI setup** — open `Skincare_Analysis.pbix` in Power BI Desktop. If prompted, update the data source file paths to point to your local CSV files, then click **Refresh**.
 
 ---
 
